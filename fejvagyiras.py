@@ -32,30 +32,75 @@ print("A kiserlet soran afej relative gyakorisaga {}% volt.".format(round(((rela
 
 print("5. feladat ")
 """Meg kell hatarozni hogy hanyszor fordult elo hogy egymas uton ketszer fejet dobtak."""
-elozo=""
-n = 0
+"""
+3 esetet kell vizsgalni:
+1. %IFFI%
+2. FFI%
+3. %IFF
+
+Peldaul:
+FFIIIIFFIIFFIIIIFF"""
+
+dupla_F_szama = 0
+utolso_4 = []  # az utolso negy elemet tartalmazza
 with open("kiserlet.txt", "rt",encoding="utf-8") as g:
-    for s in g:
-        sor = s.replace("\n","")
-        if sor == elozo and sor == "F" and elozo=="F":
-            n+=1
-        elozo=sor
-print("A kiserlet soran {} alkalommal dobtak pontosan ket fejet egymas utan.".format(n))
+    for k, s in enumerate(g):
+        utolso_4.append(s.replace('\n',''))
+        if len(utolso_4) > 4:
+            del utolso_4[0]  # letoroljuk az elso elemet
+
+        if k == 3 and utolso_4 == ['F','F','I']:  # 2.-es eset vizsgalata
+            dupla_F_szama += 1
+        if utolso_4 == ['I','F','F','I']:  # 1.-as eset vizsgalata
+            dupla_F_szama += 1
+
+if utolso_4[1:] == ['I','F','F']:  # 3.-as eset vizsgalata
+    dupla_F_szama += 1
+
+print("A kiserlet soran {} alkalommal dobtak pontosan ket fejet egymas utan.".format(dupla_F_szama))
 
 print("6. feladat ")
 """Meg kell alapitani hogy melyik fej sorozat volt a leghosszabb a fajlban."""
-legnagyon = {}
-leghosszab = {}
-n = 0
+leghosszabb_kezdodik = 0
+leghosszabb_hossza = 0
+jelenlegi_kezdodik = 0
+jelenlegi_hossza = 0
+elozo_sor = ''
 with open("kiserlet.txt", "rt",encoding="utf-8") as g:
     for k, s in enumerate(g):
         sor = s.replace("\n", "")
-        if sor =="F" and elozo == sor and elozo == "F":
-            pass
+        if sor == "F":
+            jelenlegi_hossza += 1
+            if elozo_sor != 'F':
+                jelenlegi_kezdodik = k+1
+        else:
+            if jelenlegi_hossza > leghosszabb_hossza:
+                leghosszabb_hossza = jelenlegi_hossza
+                leghosszabb_kezdodik = jelenlegi_kezdodik
+            jelenlegi_hossza = 0
+            jelenlegi_kezdodik = 0
+        elozo_sor = sor
 
+if jelenlegi_hossza > leghosszabb_hossza:
+    leghosszabb_hossza = jelenlegi_hossza
+    leghosszabb_kezdodik = jelenlegi_kezdodik
 
-
+print("A leghosszabb tisztafej sorozat {0} tagbol all, kezdete a(z) {1}. dobas".format(leghosszabb_hossza, leghosszabb_kezdodik))
 
 
 print("7. feladat ")
 """ """
+
+dobasok = []
+for n in range(1, 1001):
+    sorozat = []
+    for i in range(1,5):
+        sorozat.append(random.choice("IF"))
+    dobasok.append(sorozat)
+
+ffff_szama = dobasok.count(['F','F','F','F'])
+fffi_szama = dobasok.count(['F','F','F','I'])
+
+with open("dobasok.txt", "wt", encoding='utf-8') as f:
+    f.write("FFFF: {0}, FFFI: {1}\n".format(ffff_szama, fffi_szama))
+    f.write(' '.join([''.join(sorozat) for sorozat in dobasok]))
